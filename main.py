@@ -23,5 +23,9 @@ if __name__ == '__main__':
     relay_board = equipment.USBRelayBoard8(configuration.RELAY_BOARD_COM_STRING, configuration.RELAY_BOARD_BAUD)
     letusgrow = equipment.LetUsGrowTower(relay_board)
 
+    print(1)
     schedule.every().day.at(configuration.DAYTIME_SCHEDULE_START_TIME).do(daytime_schedule, letusgrow)
+    print(2)
     schedule.every().day.at(configuration.NIGHTTIME_SCHEDULE_START_TIME).do(nighttime_schedule, letusgrow)
+    print(3)
+
