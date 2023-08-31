@@ -32,4 +32,4 @@ class USBRelayBoard8(object):
     def set(self, channel: int, state: int):
         with self.serial_port as port:
             port.write(self.channels[channel][state])
-            port.flush()
+            port.flushOutput()
