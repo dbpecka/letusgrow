@@ -1,5 +1,5 @@
 import time
-import drivers.ADS1263
+import drivers.ADS1263 as ADS1263
 import RPi.GPIO as GPIO
 
 

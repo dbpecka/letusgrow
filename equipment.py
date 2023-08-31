@@ -4,13 +4,10 @@ import sys
 import time
 from enum import Enum
 
+from util import log
 from adc import read_adc
 from drivers.USBRelay import USBRelayBoard8
 import configuration
-
-
-def log(m: str):
-    print(m)
 
 
 class USBRelayDrivenEquipment(object):
@@ -28,7 +25,7 @@ class USBRelayDrivenEquipment(object):
     def set(self, state: int):
         self.usb_relay.set(self.channel, state)
         self.last_state_set = state
-        log(f"USBRelayDrivenEquipment<{type(self)}>.set({self.channel}, {state})")
+        log(f"USBRelayDrivenEquipment{type(self)}.set({self.channel}, {'ON/CLOSED' if state == USBRelayDrivenEquipment.ON else 'OFF/OPEN'})")
 
     def open_off(self):
         self.set(USBRelayDrivenEquipment.OFF)
