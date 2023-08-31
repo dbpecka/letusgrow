@@ -9,6 +9,10 @@ from drivers.USBRelay import USBRelayBoard8
 import configuration
 
 
+def log(m: str):
+    print(m)
+
+
 class USBRelayDrivenEquipment(object):
     OFF = 0
     OPEN = 0
@@ -24,6 +28,7 @@ class USBRelayDrivenEquipment(object):
     def set(self, state: int):
         self.usb_relay.set(self.channel, state)
         self.last_state_set = state
+        log(f"USBRelayDrivenEquipment<{type(self)}>.set({self.channel}, {state})")
 
     def open_off(self):
         self.set(USBRelayDrivenEquipment.OFF)
@@ -52,8 +57,9 @@ class Valve(USBRelayDrivenEquipment):
 
 
 class DosingPump(Pump):
-    def dose(self):
+    def dose(self, amount=None):
         # todo
+        log(f"DosingPump<{type(self)}>.dose({self.channel}, {amount})")
         pass
 
 
@@ -72,7 +78,9 @@ class PHSensor(object):
     def read_ph(self):
         # todo: make this work
         # todo: return ph, temperature
-        return read_adc()
+        data = read_adc()
+        log(f"read_ph={data}")
+        return data
 
 
 class LetUsGrowTower(object):
@@ -101,6 +109,7 @@ class LetUsGrowTower(object):
         self.ph_down_dosing_pump = Pump(usb_relay, relay_channel_ph_down_dosing_pump)
 
     def power_down(self):
+        log(f"Powering tower down")
         self.lights.off()
         self.watering_pump.off()
         self.transfer_pump.off()
@@ -111,6 +120,7 @@ class LetUsGrowTower(object):
         self.ph_down_dosing_pump.off()
 
     def empty_tank(self):
+        log(f"* * *  Emptying tank * * *")
         # first, turn off light and watering pump while we exchange water
         self.watering_pump.off()
         self.lights.off()
@@ -124,6 +134,7 @@ class LetUsGrowTower(object):
         # todo: wait until finished/emptied?
 
     def mix_tank(self):
+        log(f"Mixing tank")
         self.transfer_pump_out_valve.close()
         self.transfer_pump_mix_valve.open()
         time.sleep(configuration.VALVE_EXERCISE_TIME_SECS)
@@ -134,18 +145,21 @@ class LetUsGrowTower(object):
         self.transfer_pump_mix_valve.close()
 
     def reduce_ph(self):
+        log(f"Reducing ph")
         self.ph_down_dosing_pump.on()
         time.sleep(configuration.PH_ADJUST_DOSE_RUN_TIME_SECS)
         self.ph_down_dosing_pump.off()
         self.mix_tank()
 
     def increase_ph(self):
+        log(f"Increasing ph")
         self.ph_up_dosing_pump.on()
         time.sleep(configuration.PH_ADJUST_DOSE_RUN_TIME_SECS)
         self.ph_up_dosing_pump.off()
         self.mix_tank()
 
     def evaluate_chemistry(self):
+        log(f"Evaluating chemistry")
         ph, temperature = self.ph_sensor.read_ph()
 
         if 0 < ph < configuration.PH_LOW_LEVEL:
