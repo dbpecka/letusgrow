@@ -1,6 +1,6 @@
 numpy
 pyserial
-pil
 RPi.GPIO
 pylibftdi
 schedule
+spidev

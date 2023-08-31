@@ -27,7 +27,7 @@
 # THE SOFTWARE.
 #
 
-import ADS1263_config as config
+import drivers.ADS1263_config as config
 import RPi.GPIO as GPIO
 
 
