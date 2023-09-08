@@ -19,6 +19,7 @@ class USBRelayDrivenEquipment(object):
     def __init__(self, usb_relay: USBRelayBoard8, channel: int, default_state=OFF):
         self.usb_relay = usb_relay
         self.channel = channel
+        log(f"Mapping relay channel {channel} to {type(self)} <state={default_state}>")
         self.set(default_state)
         self.last_state_set = default_state
 
