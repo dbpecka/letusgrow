@@ -16,17 +16,27 @@ class USBRelayDrivenEquipment(object):
 
     ON, CLOSED = 1, 1
 
-    def __init__(self, usb_relay: USBRelayBoard8, channel: int, default_state=OFF):
+    def __init__(self, usb_relay: USBRelayBoard8, channel: int, default_state=OFF, name: str = 'Unnamed'):
+        self.name = name
         self.usb_relay = usb_relay
         self.channel = channel
-        log(f"Mapping relay channel {channel} to {type(self)} <state={default_state}>")
+        log(f"Event=RelayMap, "
+            f"Channel={channel}, "
+            f"DeviceType={type(self)}, "
+            f"State={default_state}, "
+            f"Name={self.name}")
         self.set(default_state)
         self.last_state_set = default_state
 
     def set(self, state: int):
         self.usb_relay.set(self.channel, state)
         self.last_state_set = state
-        log(f"USBRelayDrivenEquipment{type(self)}.set({self.channel}, {'ON/CLOSED' if state == USBRelayDrivenEquipment.ON else 'OFF/OPEN'})")
+        log(f"Event=StateSet, "
+            f"Name={self.name}, "
+            f"Type=USBRelayDrivenEquipment, "
+            f"SelfType={type(self)}, "
+            f"Channel={self.channel}, "
+            f"State={'ON/CLOSED' if state == USBRelayDrivenEquipment.ON else 'OFF/OPEN'}")
 
     def open_off(self):
         self.set(USBRelayDrivenEquipment.OFF)
@@ -56,9 +66,15 @@ class Valve(USBRelayDrivenEquipment):
 
 class DosingPump(Pump):
     def dose(self, amount=None):
-        # todo
-        log(f"DosingPump<{type(self)}>.dose({self.channel}, {amount})")
-        pass
+        log(f"Event=Dose, "
+            f"DeviceType={type(self)}, "
+            f"Channel={self.channel}, "
+            f"Amount={amount}, "
+            f"AmountUnits=seconds, "
+            f"Name={self.name}")
+        self.on()
+        time.sleep(5)
+        self.off()
 
 
 class Light(USBRelayDrivenEquipment):
@@ -95,7 +111,7 @@ class LetUsGrowTower(object):
         self.usb_relay = usb_relay
         self.ph_sensor = PHSensor()
 
-        self.lights = Light(usb_relay, relay_channel_lights, USBRelayDrivenEquipment.OFF)
+        self.lights = Light(usb_relay, relay_channel_lights, USBRelayDrivenEquipment.OFF, name='Lights')
         self.watering_pump = Pump(usb_relay, relay_channel_watering_pump)
 
         self.transfer_pump = Pump(usb_relay, relay_channel_transfer_pump)
@@ -107,7 +123,7 @@ class LetUsGrowTower(object):
         self.ph_down_dosing_pump = Pump(usb_relay, relay_channel_ph_down_dosing_pump)
 
     def power_down(self):
-        log(f"Powering tower down")
+        log(f"Event=TowerPowerDown")
         self.lights.off()
         self.watering_pump.off()
         self.transfer_pump.off()
@@ -118,7 +134,8 @@ class LetUsGrowTower(object):
         self.ph_down_dosing_pump.off()
 
     def empty_tank(self):
-        log(f"* * *  Emptying tank * * *")
+        log(f"Event=EmptyingTank, "
+            f"Critical=True")
         # first, turn off light and watering pump while we exchange water
         self.watering_pump.off()
         self.lights.off()
@@ -132,7 +149,7 @@ class LetUsGrowTower(object):
         # todo: wait until finished/emptied?
 
     def mix_tank(self):
-        log(f"Mixing tank")
+        log(f"Event=MixingTank")
         self.transfer_pump_out_valve.close()
         self.transfer_pump_mix_valve.open()
         time.sleep(configuration.VALVE_EXERCISE_TIME_SECS)
@@ -143,21 +160,21 @@ class LetUsGrowTower(object):
         self.transfer_pump_mix_valve.close()
 
     def reduce_ph(self):
-        log(f"Reducing ph")
+        log(f"Event=ReducingPh")
         self.ph_down_dosing_pump.on()
         time.sleep(configuration.PH_ADJUST_DOSE_RUN_TIME_SECS)
         self.ph_down_dosing_pump.off()
         self.mix_tank()
 
     def increase_ph(self):
-        log(f"Increasing ph")
+        log(f"Event=IncreasingPh")
         self.ph_up_dosing_pump.on()
         time.sleep(configuration.PH_ADJUST_DOSE_RUN_TIME_SECS)
         self.ph_up_dosing_pump.off()
         self.mix_tank()
 
     def evaluate_chemistry(self):
-        log(f"Evaluating chemistry")
+        log(f"Event=EvaluatingChemistry")
         ph, temperature = self.ph_sensor.read_ph()
 
         if 0 < ph < configuration.PH_LOW_LEVEL:
