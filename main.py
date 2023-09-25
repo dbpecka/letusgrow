@@ -31,7 +31,7 @@ def daytime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
     log("Starting daytime schedule")
     schedule.clear()
     letusgrow_tower.lights.on()
-    schedule.every(15).minutes().do(lambda tower: tower.watering_pump.toggle(), letusgrow_tower)
+    schedule.every(15).minutes.do(lambda tower: tower.watering_pump.toggle(), letusgrow_tower)
     log("Daytime schedule submitted")
 
 
