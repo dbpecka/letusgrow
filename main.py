@@ -47,7 +47,10 @@ def nighttime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
 if __name__ == '__main__':
     relay_board = equipment.USBRelayBoard8(configuration.RELAY_BOARD_ID)
     letusgrow = equipment.LetUsGrowTower(relay_board)
-    
+
+    # default to initially running the daytime schedule once
+    daytime_schedule(letusgrow)
+
     schedule.every().day.at(configuration.DAYTIME_SCHEDULE_START_TIME).do(daytime_schedule, letusgrow)
     schedule.every().day.at(configuration.NIGHTTIME_SCHEDULE_START_TIME).do(nighttime_schedule, letusgrow)
     
