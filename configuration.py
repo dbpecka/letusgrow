@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, time
 
 
-DAYTIME_SCHEDULE_START_TIME = "09:06"
+DAYTIME_SCHEDULE_START_TIME = "17:57"
 NIGHTTIME_SCHEDULE_START_TIME = "22:43"
 
 RELAY_BOARD_ID = "HW554"
