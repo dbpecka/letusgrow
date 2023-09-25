@@ -25,7 +25,6 @@ def signal_handler(sig, frame):
 
 
 signal.signal(signal.SIGINT, signal_handler)
-signal.pause()
 
 
 def daytime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
