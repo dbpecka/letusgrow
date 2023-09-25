@@ -1,4 +1,5 @@
-import os
+import sys
+import subprocess
 
 
 class USBRelayBoard8(object):
@@ -10,4 +11,8 @@ class USBRelayBoard8(object):
         self.board_id = board_id
 
     def set(self, channel: int, state: int):
-        os.system(f"sudo usbrelay {self.board_id}_{channel}={state}")
+        subprocess.run(f"sudo usbrelay {self.board_id}_{channel}={state}",
+                       shell=True,
+                       stdin=sys.stdin,
+                       stdout=subprocess.DEVNULL,
+                       stderr=sys.stderr)
