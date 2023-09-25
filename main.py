@@ -28,7 +28,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 def daytime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
-    log("Event=StartingSchedule,"
+    log("Event=StartingSchedule, "
         "Schedule=Daytime")
     schedule.clear()
     letusgrow_tower.lights.on()
@@ -36,7 +36,7 @@ def daytime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
 
 
 def nighttime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
-    log("Event=StartingSchedule,"
+    log("Event=StartingSchedule, "
         "Schedule=Nighttime")
     schedule.clear()
     letusgrow_tower.lights.off()

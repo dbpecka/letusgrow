@@ -93,7 +93,8 @@ class PHSensor(object):
         # todo: make this work
         # todo: return ph, temperature
         data = read_adc()
-        log(f"read_ph={data}")
+        log(f"Event=ReadPh, "
+            f"PhData={data}")
         return data
 
 
