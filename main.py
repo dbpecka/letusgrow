@@ -20,7 +20,7 @@ def signal_handler(sig, frame):
         log("* * *  sigint: attempting graceful tower shutdown  * * *")
         letusgrow.power_down()
     else:
-        log("* * *  forceably shut dow - tower equipment in unknown state * * *")
+        log("* * *  forceably shut down - tower equipment in unknown state * * *")
         sys.exit(100)
 
 
@@ -31,7 +31,9 @@ def daytime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
     log("Event=StartingSchedule,"
         "Schedule=Daytime")
     schedule.clear()
+    #letusgrow_tower.evaluate_chemistry()
     letusgrow_tower.lights.on()
+    #schedule.every(1).hours.do(lambda tower: tower.evaluate_chemistry(), letusgrow_tower)
     schedule.every(15).minutes.do(lambda tower: tower.watering_pump.toggle(), letusgrow_tower)
 
 
