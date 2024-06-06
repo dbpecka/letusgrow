@@ -94,7 +94,8 @@ class PHSensor(object):
         # todo: make this work
         # todo: return ph, temperature
         data = read_adc()
-        log(f"read_ph={data}")
+        log(f"Event=ReadPh, "
+            f"PhData={data}")
         return data
 
 
@@ -113,15 +114,15 @@ class LetUsGrowTower(object):
         self.ph_sensor = PHSensor()
 
         self.lights = Light(usb_relay, relay_channel_lights, USBRelayDrivenEquipment.OFF, name='Lights')
-        self.watering_pump = Pump(usb_relay, relay_channel_watering_pump)
+        self.watering_pump = Pump(usb_relay, relay_channel_watering_pump, name='WateringPump')
 
-        self.transfer_pump = Pump(usb_relay, relay_channel_transfer_pump)
-        self.transfer_pump_out_valve = Valve(usb_relay, relay_channel_transfer_pump_out_valve)
-        self.transfer_pump_mix_valve = Valve(usb_relay, relay_channel_transfer_pump_mix_valve)
+        self.transfer_pump = Pump(usb_relay, relay_channel_transfer_pump, name='TransferPump')
+        self.transfer_pump_out_valve = Valve(usb_relay, relay_channel_transfer_pump_out_valve, name='TransferPumpValve')
+        self.transfer_pump_mix_valve = Valve(usb_relay, relay_channel_transfer_pump_mix_valve, name='MixingPumpValve')
 
-        self.nutrient_dosing_pump = Pump(usb_relay, relay_channel_nutrient_dosing_pump)
-        self.ph_up_dosing_pump = Pump(usb_relay, relay_channel_ph_up_dosing_pump)
-        self.ph_down_dosing_pump = Pump(usb_relay, relay_channel_ph_down_dosing_pump)
+        self.nutrient_dosing_pump = Pump(usb_relay, relay_channel_nutrient_dosing_pump, name='NutrientDosingPump')
+        self.ph_up_dosing_pump = Pump(usb_relay, relay_channel_ph_up_dosing_pump, name='PhUpDosingPump')
+        self.ph_down_dosing_pump = Pump(usb_relay, relay_channel_ph_down_dosing_pump, name='PhDownDosingPump')
 
     def power_down(self):
         log(f"Event=TowerPowerDown")
