@@ -2,4 +2,4 @@ import datetime
 
 
 def log(m: str):
-    print(f"[{datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')}]  {m}")
+    print(f"[{datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')}] [App=LetUsGrow] {m}")

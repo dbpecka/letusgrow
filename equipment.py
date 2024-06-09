@@ -107,7 +107,9 @@ class LetUsGrowTower(object):
                  relay_channel_ph_up_dosing_pump=5,
                  relay_channel_ph_down_dosing_pump=6,
                  relay_channel_transfer_pump_out_valve=7,
-                 relay_channel_transfer_pump_mix_valve=8):
+                 relay_channel_transfer_pump_mix_valve=8,
+                 relay_channel_aux_1=9,
+                 relay_channel_aux_2=10):
 
         self.usb_relay = usb_relay
         self.ph_sensor = PHSensor()
