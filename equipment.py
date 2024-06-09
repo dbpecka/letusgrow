@@ -14,7 +14,8 @@ class USBRelayDrivenEquipment(object):
     OFF = 0
     OPEN = 0
 
-    ON, CLOSED = 1, 1
+    ON = 1 
+    CLOSED = 1
 
     def __init__(self, usb_relay: USBRelayBoard8, channel: int, default_state=OFF, name: str = 'Unnamed'):
         self.name = name
@@ -100,16 +101,14 @@ class PHSensor(object):
 
 class LetUsGrowTower(object):
     def __init__(self, usb_relay,
-                 relay_channel_lights=1,
-                 relay_channel_watering_pump=2,
-                 relay_channel_transfer_pump=3,
-                 relay_channel_nutrient_dosing_pump=4,
-                 relay_channel_ph_up_dosing_pump=5,
-                 relay_channel_ph_down_dosing_pump=6,
-                 relay_channel_transfer_pump_out_valve=7,
-                 relay_channel_transfer_pump_mix_valve=8,
-                 relay_channel_aux_1=9,
-                 relay_channel_aux_2=10):
+                 relay_channel_lights=5,
+                 relay_channel_watering_pump=6,
+                 relay_channel_transfer_pump=7,
+                 relay_channel_nutrient_dosing_pump=3,
+                 relay_channel_ph_up_dosing_pump=4,
+                 relay_channel_ph_down_dosing_pump=8,
+                 relay_channel_transfer_pump_out_valve=2,
+                 relay_channel_transfer_pump_mix_valve=1):
 
         self.usb_relay = usb_relay
         self.ph_sensor = PHSensor()

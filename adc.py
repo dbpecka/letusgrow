@@ -7,7 +7,7 @@ def read_adc(test_adc1=True,
              test_adc2=False,
              test_adc1_rate=False,
              test_rtd=False,
-             ref_voltage=5.08):
+             ref_voltage=3.00):
     readings = dict()
 
     try:
