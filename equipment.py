@@ -7,6 +7,7 @@ from enum import Enum
 from util import log
 from adc import read_adc
 from drivers.USBRelay import USBRelayBoard8
+from atlas_i2c import atlas_i2c
 import configuration
 
 
@@ -87,16 +88,18 @@ class Light(USBRelayDrivenEquipment):
 
 
 class PHSensor(object):
-    def __init__(self):
-        pass
+    def __init__(self, i2c_address=0x63):
+        self.device = atlas_i2c.AtlasI2C()
+        self.device.set_i2c_address(i2c_address)
 
     def read_ph(self):
-        # todo: make this work
-        # todo: return ph, temperature
-        data = read_adc()
-        log(f"Event=ReadPh, "
-            f"PhData={data}")
-        return data
+        result = self.device.query("R", processing_delay=1500)
+        if result.status_code == 1:
+            log(f"Event=ReadPh, PhData={result.data}")
+            return result.data
+        else:
+            log(f"Event=ReadPh, StatusCode={result.status_code}, Data={result.data}")
+            return False
 
 
 class LetUsGrowTower(object):
@@ -136,30 +139,30 @@ class LetUsGrowTower(object):
         self.ph_down_dosing_pump.off()
 
     def empty_tank(self):
-        log(f"Event=EmptyingTank, "
+        log(f"Event=EmptyingTank(Disabled), "
             f"Critical=True")
-        # first, turn off light and watering pump while we exchange water
-        self.watering_pump.off()
-        self.lights.off()
-
-        # open the evac valve and start pumping
-        self.transfer_pump_mix_valve.close()
-        self.transfer_pump_out_valve.open()
-        self.transfer_pump.on()
+        # # first, turn off light and watering pump while we exchange water
+        # self.watering_pump.off()
+        # self.lights.off()
+        #
+        # # open the evac valve and start pumping
+        # self.transfer_pump_mix_valve.close()
+        # self.transfer_pump_out_valve.open()
+        # self.transfer_pump.on()
 
         # todo: when the water is emptied (level is 0), stop
         # todo: wait until finished/emptied?
 
     def mix_tank(self):
-        log(f"Event=MixingTank")
-        self.transfer_pump_out_valve.close()
-        self.transfer_pump_mix_valve.open()
-        time.sleep(configuration.VALVE_EXERCISE_TIME_SECS)
-        # todo: beep, alarm, or request button/hardware confirmation?
-        self.transfer_pump.on()
-        time.sleep(configuration.MIX_RUN_TIME_SECS)
-        self.transfer_pump.off()
-        self.transfer_pump_mix_valve.close()
+        log(f"Event=MixingTank(Disabled)")
+        # self.transfer_pump_out_valve.close()
+        # self.transfer_pump_mix_valve.open()
+        # time.sleep(configuration.VALVE_EXERCISE_TIME_SECS)
+        # # todo: beep, alarm, or request button/hardware confirmation?
+        # self.transfer_pump.on()
+        # time.sleep(configuration.MIX_RUN_TIME_SECS)
+        # self.transfer_pump.off()
+        # self.transfer_pump_mix_valve.close()
 
     def reduce_ph(self):
         log(f"Event=ReducingPh")
@@ -177,7 +180,7 @@ class LetUsGrowTower(object):
 
     def evaluate_chemistry(self):
         log(f"Event=EvaluatingChemistry")
-        ph, temperature = self.ph_sensor.read_ph()
+        ph = self.ph_sensor.read_ph()
 
         if 0 < ph < configuration.PH_LOW_LEVEL:
             self.increase_ph()
