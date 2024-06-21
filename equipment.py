@@ -24,7 +24,7 @@ class USBRelayDrivenEquipment(object):
         self.channel = channel
         log(f"Event=RelayMap, "
             f"Channel={channel}, "
-            f"DeviceType={type(self)}, "
+            f"DeviceType={type(self).__name__}, "
             f"State={default_state}, "
             f"Name={self.name}")
         self.set(default_state)
@@ -34,9 +34,10 @@ class USBRelayDrivenEquipment(object):
         self.usb_relay.set(self.channel, state)
         self.last_state_set = state
         log(f"Event=StateSet, "
+            f"_{self.name}={'On' if state == USBRelayDrivenEquipment.ON else 'Off'}, "
             f"Name={self.name}, "
             f"Type=USBRelayDrivenEquipment, "
-            f"SelfType={type(self)}, "
+            f"SelfType={type(self).__name__}, "
             f"Channel={self.channel}, "
             f"State={'ON/CLOSED' if state == USBRelayDrivenEquipment.ON else 'OFF/OPEN'}")
 
@@ -69,7 +70,7 @@ class Valve(USBRelayDrivenEquipment):
 class DosingPump(Pump):
     def dose(self, amount=None):
         log(f"Event=Dose, "
-            f"DeviceType={type(self)}, "
+            f"DeviceType={type(self).__name__}, "
             f"Channel={self.channel}, "
             f"Amount={amount}, "
             f"AmountUnits=seconds, "
@@ -104,12 +105,12 @@ class PHSensor(object):
 
 class LetUsGrowTower(object):
     def __init__(self, usb_relay,
-                 relay_channel_lights=5,
-                 relay_channel_watering_pump=6,
-                 relay_channel_transfer_pump=7,
+                 relay_channel_lights=7,
+                 relay_channel_watering_pump=8,
+                 relay_channel_transfer_pump=4,
                  relay_channel_nutrient_dosing_pump=3,
-                 relay_channel_ph_up_dosing_pump=4,
-                 relay_channel_ph_down_dosing_pump=8,
+                 relay_channel_ph_up_dosing_pump=5,
+                 relay_channel_ph_down_dosing_pump=6,
                  relay_channel_transfer_pump_out_valve=2,
                  relay_channel_transfer_pump_mix_valve=1):
 
@@ -126,6 +127,10 @@ class LetUsGrowTower(object):
         self.nutrient_dosing_pump = Pump(usb_relay, relay_channel_nutrient_dosing_pump, name='NutrientDosingPump')
         self.ph_up_dosing_pump = Pump(usb_relay, relay_channel_ph_up_dosing_pump, name='PhUpDosingPump')
         self.ph_down_dosing_pump = Pump(usb_relay, relay_channel_ph_down_dosing_pump, name='PhDownDosingPump')
+
+
+    def state_audit(self):
+        pass
 
     def power_down(self):
         log(f"Event=TowerPowerDown")
@@ -180,7 +185,7 @@ class LetUsGrowTower(object):
 
     def evaluate_chemistry(self):
         log(f"Event=EvaluatingChemistry")
-        ph = self.ph_sensor.read_ph()
+        ph = float(self.ph_sensor.read_ph())
 
         if 0 < ph < configuration.PH_LOW_LEVEL:
             self.increase_ph()

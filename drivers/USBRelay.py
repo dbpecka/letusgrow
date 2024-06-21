@@ -12,7 +12,8 @@ class USBRelayBoard8(object):
 
     def set(self, channel: int, state: int):
         set_state = "on" if state == 1 else "off"
-        subprocess.run(f"sudo sainsmartrelay --{set_state} {channel}", shell=True, stdin=sys.stdin, stdout=subprocess.DEVNULL, stderr=sys.stderr)
+        #subprocess.run(f"sudo sainsmartrelay --{set_state} {channel}", shell=True, stdin=sys.stdin, stdout=subprocess.DEVNULL, stderr=sys.stderr)
+        subprocess.run(f"sainsmartrelay --{set_state} {channel}", shell=True, stdin=sys.stdin, stdout=subprocess.DEVNULL, stderr=sys.stderr)
         #subprocess.run(f"sudo usbrelay {self.board_id}_{channel}={state}",
         #               shell=True,
         #               stdin=sys.stdin,
