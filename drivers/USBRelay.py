@@ -21,7 +21,7 @@ class USBRelayBoard8(object):
     def get_all_states(self):
         states = dict()
         result = subprocess.run(f"sainsmartrelay --status all", shell=True, capture_output=True, text=True)
-        for line in result.stdout:
+        for line in result.stdout.splitlines():
             try:
                 line = line.strip()
                 cs = line.split(':')[1].strip()
