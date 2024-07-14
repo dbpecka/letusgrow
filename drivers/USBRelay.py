@@ -13,7 +13,6 @@ class USBRelayBoard8(object):
     def __init__(self, board_id: str = ''):
         self.board_id = board_id
 
-    @staticmethod
     def set(self, channel: int, state: int):
         set_state = "on" if state == 1 else "off"
         subprocess.run(f"sainsmartrelay --{set_state} {channel}", shell=True, stdin=sys.stdin, stdout=subprocess.DEVNULL, stderr=sys.stderr)
