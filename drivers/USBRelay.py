@@ -23,8 +23,11 @@ class USBRelayBoard8(object):
         states = dict()
         result = subprocess.run(f"sainsmartrelay --status all", shell=True, capture_output=True, text=True)
         for line in result.stdout:
-            line = line.strip()
-            cs = line.split(':')[1].strip()
-            states[line.split(':')[0]] = self.OFF if cs == 'OFF' else self.ON
+            try:
+                line = line.strip()
+                cs = line.split(':')[1].strip()
+                states[line.split(':')[0]] = self.OFF if cs == 'OFF' else self.ON
+            except Exception as ex:
+                print(f"Error processing line '{line}': {str(ex)}")
 
         return states
