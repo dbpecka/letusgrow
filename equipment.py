@@ -128,9 +128,20 @@ class LetUsGrowTower(object):
         self.ph_up_dosing_pump = Pump(usb_relay, relay_channel_ph_up_dosing_pump, name='PhUpDosingPump')
         self.ph_down_dosing_pump = Pump(usb_relay, relay_channel_ph_down_dosing_pump, name='PhDownDosingPump')
 
-
     def state_audit(self):
-        pass
+        actual_relay_states = self.usb_relay.get_all_states()
+        log(actual_relay_states)
+
+        for device in [self.lights,
+                       self.watering_pump,
+                       self.transfer_pump,
+                       self.transfer_pump_out_valve,
+                       self.transfer_pump_mix_valve,
+                       self.nutrient_dosing_pump,
+                       self.ph_up_dosing_pump,
+                       self.ph_down_dosing_pump]:
+            if device.last_state_set != actual_relay_states[device.channel]:
+                log(f"Device state mismatch: {device.name}({device.channel}) is {actual_relay_states[device.channel]} but should be {device.last_state_set}")
 
     def power_down(self):
         log(f"Event=TowerPowerDown")
@@ -185,7 +196,18 @@ class LetUsGrowTower(object):
 
     def evaluate_chemistry(self):
         log(f"Event=EvaluatingChemistry")
+
+        # make sure pump is stopped so that the water can settle for a more accurate reading
+        last_pump_state = self.watering_pump.last_state_set
+        self.watering_pump.off()
+        time.sleep(10)
+
+        # read the ph
         ph = float(self.ph_sensor.read_ph())
+        time.sleep(5)
+
+        # set the pump state to whatever it was before
+        self.watering_pump.set(last_pump_state)
 
         if 0 < ph < configuration.PH_LOW_LEVEL:
             self.increase_ph()
