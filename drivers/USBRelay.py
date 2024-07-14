@@ -21,9 +21,8 @@ class USBRelayBoard8(object):
 
     def get_all_states(self):
         states = dict()
-        output = io.StringIO()
-        subprocess.run(f"sainsmartrelay --status all", shell=True, stdin=sys.stdin, stdout=output)
-        for line in output.readlines():
+        result = subprocess.run(f"sainsmartrelay --status all", shell=True, capture_output=True, text=True)
+        for line in result.stdout:
             line = line.strip()
             cs = line.split(':')[1].strip()
             states[line.split(':')[0]] = self.OFF if cs == 'OFF' else self.ON
