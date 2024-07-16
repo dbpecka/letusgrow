@@ -42,7 +42,8 @@ def nighttime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
     log("Event=StartingSchedule, "
         "Schedule=Nighttime")
     schedule.clear()
-    letusgrow_tower.lights.off()
+    # letusgrow_tower.lights.off()
+    schedule.every(10).minutes.do(lambda tower: tower.lights.off(), letusgrow_tower)
     schedule.every().hour.at(":00").do(lambda tower: tower.watering_pump.on(), letusgrow_tower)
     schedule.every().hour.at(":15").do(lambda tower: tower.watering_pump.off(), letusgrow_tower)
     schedule.every(10).minutes.do(lambda tower: tower.state_audit(), letusgrow_tower)
