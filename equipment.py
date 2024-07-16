@@ -141,7 +141,7 @@ class LetUsGrowTower(object):
                        self.ph_up_dosing_pump,
                        self.ph_down_dosing_pump]:
             if device.last_state_set != actual_relay_states[str(device.channel)]:
-                log(f"Device state mismatch: {device.name}({device.channel}) is {actual_relay_states[device.channel]} but should be {device.last_state_set}")
+                log(f"Device state mismatch: {device.name}({device.channel}) is {actual_relay_states[str(device.channel)]} but should be {device.last_state_set}")
 
     def power_down(self):
         log(f"Event=TowerPowerDown")
