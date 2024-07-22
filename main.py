@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # default to initially running the daytime schedule once
     daytime_start_time = datetime.datetime.strptime(configuration.DAYTIME_SCHEDULE_START_TIME, "%H:%M")
     nighttime_start_time = datetime.datetime.strptime(configuration.NIGHTTIME_SCHEDULE_START_TIME, "%H:%M")
-    if daytime_start_time <= datetime.datetime.now() < nighttime_start_time:
+    if daytime_start_time <= datetime.datetime.strptime(datetime.datetime.now().strftime("%H:%M"), "%H:%M") < nighttime_start_time:
         daytime_schedule(letusgrow)
     else:
         nighttime_schedule(letusgrow)
