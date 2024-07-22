@@ -31,9 +31,6 @@ def signal_handler(sig, frame):
         sys.exit(100)
 
 
-signal.signal(signal.SIGINT, signal_handler)
-
-
 def daytime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
     log("Event=StartingSchedule, "
         "Schedule=Daytime")
@@ -64,6 +61,7 @@ if __name__ == '__main__':
 
     if sys.argv[1] == 'controller':
         letusgrow = equipment.LetUsGrowTower(relay_board)
+        signal.signal(signal.SIGINT, signal_handler)
 
         # default to initially running the daytime schedule once
         daytime_start_time = datetime.datetime.strptime(configuration.DAYTIME_SCHEDULE_START_TIME, "%H:%M")
