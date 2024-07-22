@@ -5,3 +5,4 @@ pylibftdi
 schedule
 spidev
 atlas_i2c
+flask

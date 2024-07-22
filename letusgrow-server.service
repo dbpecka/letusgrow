@@ -6,7 +6,7 @@ After=multi-user.target
 Type=simple
 Restart=always
 WorkingDirectory=/home/dpecka/letusgrow
-ExecStart=/home/dpecka/letusgrow/venv/bin/python3 main.py controller
+ExecStart=/home/dpecka/letusgrow/venv/bin/python3 main.py server
 Restart=always
 
 [Install]

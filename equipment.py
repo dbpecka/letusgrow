@@ -214,3 +214,7 @@ class LetUsGrowTower(object):
 
         if configuration.PH_HIGH_LEVEL < ph < 14:
             self.reduce_ph()
+
+        return dict(
+            ph=ph
+        )

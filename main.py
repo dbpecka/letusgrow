@@ -3,6 +3,7 @@ import time
 import signal
 import schedule
 import datetime
+import json
 
 from util import log
 import equipment
@@ -62,18 +63,28 @@ if __name__ == '__main__':
     relay_board = equipment.USBRelayBoard8(configuration.RELAY_BOARD_ID)
     letusgrow = equipment.LetUsGrowTower(relay_board)
 
-    # default to initially running the daytime schedule once
-    daytime_start_time = datetime.datetime.strptime(configuration.DAYTIME_SCHEDULE_START_TIME, "%H:%M")
-    nighttime_start_time = datetime.datetime.strptime(configuration.NIGHTTIME_SCHEDULE_START_TIME, "%H:%M")
-    if daytime_start_time <= datetime.datetime.strptime(datetime.datetime.now().strftime("%H:%M"), "%H:%M") < nighttime_start_time:
-        daytime_schedule(letusgrow)
-    else:
-        nighttime_schedule(letusgrow)
+    if sys.argv[1] == 'controller':
+        # default to initially running the daytime schedule once
+        daytime_start_time = datetime.datetime.strptime(configuration.DAYTIME_SCHEDULE_START_TIME, "%H:%M")
+        nighttime_start_time = datetime.datetime.strptime(configuration.NIGHTTIME_SCHEDULE_START_TIME, "%H:%M")
+        if daytime_start_time <= datetime.datetime.strptime(datetime.datetime.now().strftime("%H:%M"), "%H:%M") < nighttime_start_time:
+            daytime_schedule(letusgrow)
+        else:
+            nighttime_schedule(letusgrow)
 
-    schedule_rotator.every().day.at(configuration.DAYTIME_SCHEDULE_START_TIME).do(daytime_schedule, letusgrow)
-    schedule_rotator.every().day.at(configuration.NIGHTTIME_SCHEDULE_START_TIME).do(nighttime_schedule, letusgrow)
-    
-    while True:
-        schedule_rotator.run_pending()
-        schedule_runner.run_pending()
-        time.sleep(5)
+        schedule_rotator.every().day.at(configuration.DAYTIME_SCHEDULE_START_TIME).do(daytime_schedule, letusgrow)
+        schedule_rotator.every().day.at(configuration.NIGHTTIME_SCHEDULE_START_TIME).do(nighttime_schedule, letusgrow)
+
+        while True:
+            schedule_rotator.run_pending()
+            schedule_runner.run_pending()
+            time.sleep(5)
+
+    elif sys.argv[1] == 'server':
+        from flask import Flask
+
+        app = Flask(__name__)
+
+        @app.route("/chemistry")
+        def hello_world():
+            return json.dumps(letusgrow.evaluate_chemistry())
