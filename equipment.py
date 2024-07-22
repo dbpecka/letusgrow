@@ -18,7 +18,7 @@ class USBRelayDrivenEquipment(object):
     ON = 1 
     CLOSED = 1
 
-    def __init__(self, usb_relay: USBRelayBoard8, channel: int, default_state=OFF, name: str = 'Unnamed'):
+    def __init__(self, usb_relay: USBRelayBoard8, channel: int, default_state=OFF, name: str = 'Unnamed', set_state: bool = True):
         self.name = name
         self.usb_relay = usb_relay
         self.channel = channel
@@ -27,8 +27,9 @@ class USBRelayDrivenEquipment(object):
             f"DeviceType={type(self).__name__}, "
             f"State={default_state}, "
             f"Name={self.name}")
-        self.set(default_state)
-        self.last_state_set = default_state
+        if set_state:
+            self.set(default_state)
+            self.last_state_set = default_state
 
     def set(self, state: int):
         self.usb_relay.set(self.channel, state)
@@ -112,21 +113,22 @@ class LetUsGrowTower(object):
                  relay_channel_ph_up_dosing_pump=5,
                  relay_channel_ph_down_dosing_pump=6,
                  relay_channel_transfer_pump_out_valve=2,
-                 relay_channel_transfer_pump_mix_valve=1):
+                 relay_channel_transfer_pump_mix_valve=1,
+                 set_relay_states=True):
 
         self.usb_relay = usb_relay
         self.ph_sensor = PHSensor()
 
-        self.lights = Light(usb_relay, relay_channel_lights, USBRelayDrivenEquipment.OFF, name='Lights')
-        self.watering_pump = Pump(usb_relay, relay_channel_watering_pump, name='WateringPump')
+        self.lights = Light(usb_relay, relay_channel_lights, USBRelayDrivenEquipment.OFF, name='Lights', set_state=set_relay_states)
+        self.watering_pump = Pump(usb_relay, relay_channel_watering_pump, name='WateringPump', set_state=set_relay_states)
 
-        self.transfer_pump = Pump(usb_relay, relay_channel_transfer_pump, name='TransferPump')
-        self.transfer_pump_out_valve = Valve(usb_relay, relay_channel_transfer_pump_out_valve, name='TransferPumpValve')
-        self.transfer_pump_mix_valve = Valve(usb_relay, relay_channel_transfer_pump_mix_valve, name='MixingPumpValve')
+        self.transfer_pump = Pump(usb_relay, relay_channel_transfer_pump, name='TransferPump', set_state=set_relay_states)
+        self.transfer_pump_out_valve = Valve(usb_relay, relay_channel_transfer_pump_out_valve, name='TransferPumpValve', set_state=set_relay_states)
+        self.transfer_pump_mix_valve = Valve(usb_relay, relay_channel_transfer_pump_mix_valve, name='MixingPumpValve', set_state=set_relay_states)
 
-        self.nutrient_dosing_pump = Pump(usb_relay, relay_channel_nutrient_dosing_pump, name='NutrientDosingPump')
-        self.ph_up_dosing_pump = Pump(usb_relay, relay_channel_ph_up_dosing_pump, name='PhUpDosingPump')
-        self.ph_down_dosing_pump = Pump(usb_relay, relay_channel_ph_down_dosing_pump, name='PhDownDosingPump')
+        self.nutrient_dosing_pump = Pump(usb_relay, relay_channel_nutrient_dosing_pump, name='NutrientDosingPump', set_state=set_relay_states)
+        self.ph_up_dosing_pump = Pump(usb_relay, relay_channel_ph_up_dosing_pump, name='PhUpDosingPump', set_state=set_relay_states)
+        self.ph_down_dosing_pump = Pump(usb_relay, relay_channel_ph_down_dosing_pump, name='PhDownDosingPump', set_state=set_relay_states)
 
     def state_audit(self):
         actual_relay_states = self.usb_relay.get_all_states()

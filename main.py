@@ -61,9 +61,10 @@ def nighttime_schedule(letusgrow_tower: equipment.LetUsGrowTower):
 
 if __name__ == '__main__':
     relay_board = equipment.USBRelayBoard8(configuration.RELAY_BOARD_ID)
-    letusgrow = equipment.LetUsGrowTower(relay_board)
 
     if sys.argv[1] == 'controller':
+        letusgrow = equipment.LetUsGrowTower(relay_board)
+
         # default to initially running the daytime schedule once
         daytime_start_time = datetime.datetime.strptime(configuration.DAYTIME_SCHEDULE_START_TIME, "%H:%M")
         nighttime_start_time = datetime.datetime.strptime(configuration.NIGHTTIME_SCHEDULE_START_TIME, "%H:%M")
@@ -81,6 +82,8 @@ if __name__ == '__main__':
             time.sleep(5)
 
     elif sys.argv[1] == 'server':
+        letusgrow = equipment.LetUsGrowTower(relay_board, set_relay_states=False)
+
         from flask import Flask
 
         app = Flask(__name__)
