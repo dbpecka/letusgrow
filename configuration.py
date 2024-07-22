@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, time
 DAYTIME_SCHEDULE_START_TIME = "08:00"
 NIGHTTIME_SCHEDULE_START_TIME = "20:00"
 
+SERVER_LISTEN = '0.0.0.0:2800'
 RELAY_BOARD_ID = ""
 
 #MIX_RUN_TIME_SECS = 30

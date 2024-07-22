@@ -91,3 +91,5 @@ if __name__ == '__main__':
         @app.route("/chemistry")
         def hello_world():
             return json.dumps(letusgrow.evaluate_chemistry())
+
+        app.run(host=configuration.SERVER_LISTEN.split(':')[0], port=int(configuration.SERVER_LISTEN.split(':')[0]))
