@@ -29,7 +29,8 @@ class USBRelayDrivenEquipment(object):
             f"Name={self.name}")
         if set_state:
             self.set(default_state)
-            self.last_state_set = default_state
+
+        self.last_state_set = default_state
 
     def set(self, state: int):
         self.usb_relay.set(self.channel, state)
