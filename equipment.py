@@ -197,26 +197,27 @@ class LetUsGrowTower(object):
         self.ph_up_dosing_pump.off()
         self.mix_tank()
 
-    def evaluate_chemistry(self):
+    def evaluate_chemistry(self, read_only=False):
         log(f"Event=EvaluatingChemistry")
 
-        # make sure pump is stopped so that the water can settle for a more accurate reading
-        last_pump_state = self.watering_pump.last_state_set
-        self.watering_pump.off()
-        time.sleep(10)
+        if not read_only:
+            # make sure pump is stopped so that the water can settle for a more accurate reading
+            last_pump_state = self.watering_pump.last_state_set
+            self.watering_pump.off()
+            time.sleep(10)
 
         # read the ph
         ph = float(self.ph_sensor.read_ph())
-        time.sleep(5)
 
-        # set the pump state to whatever it was before
-        self.watering_pump.set(last_pump_state)
+        if not read_only:
+            # set the pump state to whatever it was before
+            self.watering_pump.set(last_pump_state)
 
-        if 0 < ph < configuration.PH_LOW_LEVEL:
-            self.increase_ph()
+            if 0 < ph < configuration.PH_LOW_LEVEL:
+                self.increase_ph()
 
-        if configuration.PH_HIGH_LEVEL < ph < 14:
-            self.reduce_ph()
+            if configuration.PH_HIGH_LEVEL < ph < 14:
+                self.reduce_ph()
 
         return dict(
             ph=ph
