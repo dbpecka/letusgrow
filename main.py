@@ -82,12 +82,19 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'server':
         letusgrow = equipment.LetUsGrowTower(relay_board, set_relay_states=False)
 
-        from flask import Flask
+        from flask import Flask, jsonify
 
         app = Flask(__name__)
 
         @app.route("/chemistry")
-        def hello_world():
-            return json.dumps(letusgrow.evaluate_chemistry(read_only=True))
+        def route_chemistry():
+            return jsonify(letusgrow.evaluate_chemistry(read_only=True))
+
+        @app.route("/status")
+        def route_status():
+            return jsonify(dict(
+                lights=letusgrow.lights.last_state_set,
+                watering_pump=letusgrow.watering_pump.last_state_set
+            ))
 
         app.run(host=configuration.SERVER_LISTEN.split(':')[0], port=int(configuration.SERVER_LISTEN.split(':')[1]))
