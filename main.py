@@ -92,9 +92,10 @@ if __name__ == '__main__':
 
         @app.route("/status")
         def route_status():
+            states = letusgrow.usb_relay.get_all_states()
             return jsonify(dict(
-                lights=letusgrow.lights.last_state_set,
-                watering_pump=letusgrow.watering_pump.last_state_set
+                lights=states[str(letusgrow.lights.channel)],
+                watering_pump=states[str(letusgrow.watering_pump.channel)]
             ))
 
         app.run(host=configuration.SERVER_LISTEN.split(':')[0], port=int(configuration.SERVER_LISTEN.split(':')[1]))
