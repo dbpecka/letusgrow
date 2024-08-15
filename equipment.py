@@ -90,18 +90,18 @@ class Light(USBRelayDrivenEquipment):
         self.open_off()
 
 
-class PHSensor(object):
+class I2CSensor(object):
     def __init__(self, i2c_address=0x63):
         self.device = atlas_i2c.AtlasI2C()
         self.device.set_i2c_address(i2c_address)
 
-    def read_ph(self):
+    def read(self):
         result = self.device.query("R", processing_delay=1500)
         if result.status_code == 1:
-            log(f"Event=ReadPh, PhData={result.data}")
+            log(f"Event=ReadI2C, I2CData={result.data}")
             return result.data
         else:
-            log(f"Event=ReadPh, StatusCode={result.status_code}, Data={result.data}")
+            log(f"Event=ReadI2C, StatusCode={result.status_code}, Data={result.data}")
             return False
 
 
@@ -118,7 +118,8 @@ class LetUsGrowTower(object):
                  set_relay_states=True):
 
         self.usb_relay = usb_relay
-        self.ph_sensor = PHSensor()
+        self.ph_sensor = I2CSensor(i2c_address=0x63)
+        self.orp_sensor = I2CSensor(i2c_address=0x62)
 
         self.lights = Light(usb_relay, relay_channel_lights, USBRelayDrivenEquipment.OFF, name='Lights', set_state=set_relay_states)
         self.watering_pump = Pump(usb_relay, relay_channel_watering_pump, name='WateringPump', set_state=set_relay_states)
@@ -207,7 +208,8 @@ class LetUsGrowTower(object):
             time.sleep(10)
 
         # read the ph
-        ph = float(self.ph_sensor.read_ph())
+        ph = float(self.ph_sensor.read())
+        orp = float(self.orp_sensor.read())
 
         if not read_only:
             # set the pump state to whatever it was before
@@ -220,5 +222,6 @@ class LetUsGrowTower(object):
                 self.reduce_ph()
 
         return dict(
-            ph=ph
+            ph=ph,
+            orp=orp
         )
